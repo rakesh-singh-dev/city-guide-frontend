@@ -48,7 +48,7 @@ export const askAboutCity = async ({
   cityName: string;
 }) => {
   try {
-    const res = await fetch("http://localhost:3000/generate", {
+    const res = await fetch("https://city-guide-backend.onrender.com/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
