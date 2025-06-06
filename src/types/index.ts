@@ -4,7 +4,6 @@ export interface CityWeather {
   icon?: string;
 }
 
-
 export interface City {
   id: string;
   name: string;
@@ -28,7 +27,7 @@ export interface CityMetric {
   name: string;
   value: string | number;
   description?: string;
-  comparisonValue?: 'high' | 'medium' | 'low';
+  comparisonValue?: "high" | "medium" | "low";
 }
 
 export interface Question {

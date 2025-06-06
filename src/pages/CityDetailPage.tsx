@@ -1,28 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import { useRoute } from '../components/providers/NavigationProvider';
-import { getCityById } from '../data/cities';
-import CityDetail from '../components/cities/CityDetail';
-import { City } from '../types';
+import React, { useEffect, useState } from "react";
+import {
+  useRoute,
+  useNavigationState,
+} from "../components/providers/NavigationProvider";
+import { getCityById } from "../data/cities";
+import CityDetail from "../components/cities/CityDetail";
+import { City } from "../types";
 
 const CityDetailPage: React.FC = () => {
+  // const { params } = useRoute();
+  // const [city, setCity] = useState<City | null>(null);
+  // const [isLoading, setIsLoading] = useState(true);
+
+  // useEffect(() => {
+  //   if (params.cityId) {
+  //     // Simulate API call delay
+  //     setIsLoading(true);
+  //     setTimeout(() => {
+  //       const cityData = getCityById(params.cityId);
+  //       if (cityData) {
+  //         setCity(cityData);
+  //       }
+  //       setIsLoading(false);
+  //     }, 500);
+  //   }
+  // }, [params.cityId]);
   const { params } = useRoute();
+  const navState = useNavigationState() as { city?: City };
   const [city, setCity] = useState<City | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
-    if (params.cityId) {
-      // Simulate API call delay
+    if (navState?.city) {
+      // If full city was passed via navigate state
+      setCity(navState.city);
+      setIsLoading(false);
+    } else if (params.cityId) {
+      // Fallback to static lookup
       setIsLoading(true);
       setTimeout(() => {
         const cityData = getCityById(params.cityId);
-        if (cityData) {
-          setCity(cityData);
-        }
+        if (cityData) setCity(cityData);
         setIsLoading(false);
       }, 500);
     }
-  }, [params.cityId]);
-  
+  }, [params.cityId, navState?.city]);
+
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-4">
@@ -48,16 +71,20 @@ const CityDetailPage: React.FC = () => {
       </div>
     );
   }
-  
+
   if (!city) {
     return (
       <div className="text-center py-16">
-        <h2 className="text-2xl font-bold text-gray-700 mb-4">City Not Found</h2>
-        <p className="text-gray-600">The city you're looking for doesn't exist or has been removed.</p>
+        <h2 className="text-2xl font-bold text-gray-700 mb-4">
+          City Not Found
+        </h2>
+        <p className="text-gray-600">
+          The city you're looking for doesn't exist or has been removed.
+        </p>
       </div>
     );
   }
-  
+
   return <CityDetail city={city} />;
 };
 

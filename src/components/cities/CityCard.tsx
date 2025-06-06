@@ -12,7 +12,9 @@ const CityCard: React.FC<CityCardProps> = ({ city }) => {
   const navigate = useNavigate();
   
   const handleClick = () => {
-    navigate(`/city/${city.id}`);
+    // navigate(`/city/${city.id}`);
+    navigate(`/city/${city.id}`, { state: { city } });
+
   };
   
   return (

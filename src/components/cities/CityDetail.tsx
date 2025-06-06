@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { City } from "../../types";
 import { MapPin, Heart, Share2, MessageCircle, ArrowLeft } from "lucide-react";
 import Button from "../ui/Button";
 import Card, { CardContent, CardHeader } from "../ui/Card";
 import { useNavigate } from "../providers/NavigationProvider";
 import CityAIQuestion from "./CityAIQuestion";
+import {
+  addFavorite,
+  removeFavorite,
+  isFavorite as checkIsFavorite,
+} from "../../services/favoritesService";
 
 interface CityDetailProps {
   city: City;
@@ -12,20 +17,48 @@ interface CityDetailProps {
 
 const CityDetail: React.FC<CityDetailProps> = ({ city }) => {
   const [isFavorite, setIsFavorite] = useState(false);
+  useEffect(() => {
+    setIsFavorite(checkIsFavorite(city.id));
+  }, [city.id]);
   const [activeCategory, setActiveCategory] = useState<string>(
     Object.keys(city.categories)[0]
   );
   const [showAIQuestion, setShowAIQuestion] = useState(false);
   const navigate = useNavigate();
 
+  // const toggleFavorite = () => {
+  //   setIsFavorite(!isFavorite);
+  //   // In a real app, this would save to user's favorites
+  // };
   const toggleFavorite = () => {
+    if (isFavorite) {
+      removeFavorite(city.id);
+    } else {
+      addFavorite(city);
+    }
     setIsFavorite(!isFavorite);
-    // In a real app, this would save to user's favorites
   };
 
-  const handleShare = () => {
-    // In a real app, this would open a share dialog
-    alert(`Sharing ${city.name}`);
+  // const handleShare = () => {
+  //   // In a real app, this would open a share dialog
+  //   alert(`Sharing ${city.name}`);
+  // };
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/city/${city.id}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Check out ${city.name}`,
+          url: shareUrl,
+        });
+      } catch (err) {
+        console.error("Share cancelled or failed", err);
+      }
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      alert("Link copied to clipboard!");
+    }
   };
 
   const handleBack = () => {

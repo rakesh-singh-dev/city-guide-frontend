@@ -1,23 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
 import CityGrid from '../components/cities/CityGrid';
-import { cities } from '../data/cities';
+//import { cities } from '../data/cities';
 import { City } from '../types';
+import { getFavorites } from "../services/favoritesService";
 
 const FavoritesPage: React.FC = () => {
   // In a real app, this would fetch from a database or local storage
   const [favorites, setFavorites] = useState<City[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
+  // useEffect(() => {
+  //   // Simulate loading data - in a real app this would be fetched from storage
+  //   setIsLoading(true);
+  //   setTimeout(() => {
+  //     // For demo purposes, we'll just show a couple of cities as favorites
+  //     setFavorites([cities[0], cities[2]]);
+  //     setIsLoading(false);
+  //   }, 500);
+  // }, []);
   useEffect(() => {
-    // Simulate loading data - in a real app this would be fetched from storage
-    setIsLoading(true);
-    setTimeout(() => {
-      // For demo purposes, we'll just show a couple of cities as favorites
-      setFavorites([cities[0], cities[2]]);
-      setIsLoading(false);
-    }, 500);
-  }, []);
+  setIsLoading(true);
+  setTimeout(() => {
+    const stored = getFavorites();
+    setFavorites(stored);
+    setIsLoading(false);
+  }, 300);
+}, []);
   
   return (
     <div className="space-y-8 pb-16">
